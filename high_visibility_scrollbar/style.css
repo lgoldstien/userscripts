@@ -1,14 +1,18 @@
-::-webkit-scrollbar {
-    width: 22px;
+html, body {
+    padding: 0;
+    margin: 0;
 }
- 
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    box-sizing: border-box;
+    padding: 10px;
+    overflow: hidden;
 }
- 
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #E2DDB5;
-    -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); 
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+
+.overview {
+    height: auto;
 }
