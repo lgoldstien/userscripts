@@ -13,47 +13,31 @@
 
 // The clipboard functions
 var clipboard = {
-
-    setClipboard: function (text) {
-        
-        GM_setClipboard(text);
-
+    
+    // Set the clipboard contents
+    setClipboard: function (string) {
+        GM_setClipboard(string);
     },
-
+    // Get the clipboard contents on ctrl+c
     getClipboard: function (e) {
         if (e.ctrlKey && e.keyCode === 67) {
             var content = window.getSelection();
             this.storeItem(content);
         }
     },
-
+    // Store an item in the array
     storeItem: function (content) {
-        var row = parseInt(this.storageCurrentRows());
-        localStorage.setItem("web_clipboard_" + row, content);
-        localStorage.setItem("web_clipboard_rows", row);
-        console.log("Copied an item to storage row " + row + " with following content: " + content)
-    },
-
-    storageCountRows: function () {
-        if ( localStorage.getItem("web_clipboard_rows") == null ){
-            return 0;
-        }
-        if ( isNaN( localStorage.getItem("web_clipboard_rows") ) ) {
-            return 0;
-        } else {
-            return localStorage.getItem("web_clipboard_rows");
-        }
-        
-    },
-
-    storageCurrentRows: function () {
-        return parseInt(this.storageCountRows()) + 1;
+        var location = "web_clipboard_contents";
+        storage.pushArray(location, content);
     },
 
     storageClear: function () {
-
+        storage.deleteAll();
     },
+}
 
+// The container div
+var container = {
     createContainerDiv: function () {
         // Add the div to contain the clipboard
         var web_clipboard = document.createElement('div');
@@ -63,10 +47,8 @@ var clipboard = {
     },
 
     containerStyle: "#web_clipboard { background-color: #eee; position: fixed; top: 0; right: 15px; width: 30px; height: 25px; border-radius: 0 0 10px 10px; z-index: 99999; box-shadow: 0px 1px 3px black;}",
-
-
 }
-
+    
 // The localstorage variables
 var storage = {
 
@@ -78,6 +60,7 @@ var storage = {
             return false;
         }
     },
+    // Get an item
     getItem: function (key) {
         if ( this.supported() == false ) {
             console.log("Storage not supported.");
@@ -85,6 +68,7 @@ var storage = {
             return localStorage[key];
         }
     },
+    // Set an item
     setItem: function (key, data) {
         if ( this.supported() == false ) {
             console.log("Storage not supported.");
@@ -92,37 +76,60 @@ var storage = {
             localStorage[key] = data;
         }
     },
+    // Get an array
     getArray: function (key) {
         var item = this.getItem(key);
-        return JSON.parse(item);
+        if ( item == null ) {
+            return false;
+        } else {
+            return JSON.parse(item);
+        }
     },
+    // Set an array
     setArray: function (key, data) {
         var string = JSON.stringify(data);
-        
+        this.setItem(key, string);
     },
+    // Push an item onto an array
+    pushArray: function (key, data) {
+        var current = this.getArray(key);
+        if( current == false ) {
+            this.setArray(key, data);
+        } else {
+            if( typeof current == "string" ) {
+                current = current.split();
+            }
+            current.push(data);
+            this.setArray(key, current);
+        }
+    },
+    // Pop an item from an array
+    popArray: function (key) {
+        var current = this.getArray(key);
+        current.pop();
+        this.setArray(key, current);
+    },
+    // Get all items in the storage
     getAll: function () {
         return localStorage;
     },
+    // Delete the entire localstorage
     deleteAll: function () {
         localStorage.clear();
     }
 
 }
 
-function testJSON () {
-    var array = ["text bit 1", "text bit 2", "text bit 3", "text bit 4"];
-    return JSON.stringify(array);
-}
 // Initialise the objects and get ready
 $(document).ready(function(){
     
     // Add the div to the page
-    clipboard.createContainerDiv();
-    console.log("Created <div>");
+    container.createContainerDiv();
+    //console.log("Created <div>");
 
     // Add the style to the page
     //GM_addStyle(clipboard.containerStyle);
-    console.log("Styled <div>");
+    //console.log("Styled <div>");
 
     // Add the keyboard hook
     $(window).keydown(function (e) {
@@ -130,6 +137,7 @@ $(document).ready(function(){
     });
 
 });
+
 </script>
 <style>
 #web_clipboard {
