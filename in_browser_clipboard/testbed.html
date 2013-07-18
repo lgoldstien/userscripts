@@ -13,7 +13,7 @@
 
 // The clipboard functions
 var clipboard = {
-    
+
     // Set the clipboard contents
     setClipboard: function (string) {
         GM_setClipboard(string);
@@ -21,8 +21,10 @@ var clipboard = {
     // Get the clipboard contents on ctrl+c
     getClipboard: function (e) {
         if (e.ctrlKey && e.keyCode === 67) {
-            var content = window.getSelection();
+            var content = window.getSelection().toString();
+            if ( content )
             this.storeItem(content);
+            console.log("Copied '" + content + "' to the clipboard.")
         }
     },
     // Store an item in the array
