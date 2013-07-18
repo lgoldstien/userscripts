@@ -1,4 +1,5 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<link rel="stylesheet" href="http://daneden.me/animate/animate.css" />
 <script>// ==UserScript==
 // @name                The Web Clipboard
 // @description         This script will give you a clipboard on every webpage you visit
@@ -44,13 +45,31 @@ var container = {
         // Add the div to contain the clipboard
         var web_clipboard = document.createElement('div');
         web_clipboard.id = "web_clipboard";
-        web_clipboard.innerHTML = ""
+        web_clipboard.className = "animated";
+        web_clipboard.innerHTML = "";
         document.getElementsByTagName('body')[0].appendChild(web_clipboard);
+    },
+
+    addNewElement: function (text) {
+
+    },
+
+    addExistingElements: function () {
+        
     },
 
     containerStyle: "#web_clipboard { background-color: #eee; position: fixed; top: 0; right: 15px; width: 30px; height: 25px; border-radius: 0 0 10px 10px; z-index: 99999; box-shadow: 0px 1px 3px black;}",
 }
-    
+
+// The animations
+var animations = {
+    // Apply an effect
+    applyEffect: function (elem, effect) {
+        document.getElementById(elem).className = 'animated ' + effect;
+        setTimeout( function(){ document.getElementById(elem).className = ''; }, 900 );
+    }
+}
+
 // The localstorage variables
 var storage = {
 
@@ -157,5 +176,6 @@ $(document).ready(function(){
 <body>
 Some text to copy.
 <textarea>Some space to paste</textarea>
+<button onClick="animations.applyEffect('web_clipboard', 'shake');">Click to Stop</button>
 <div id="the_board"></div>
 </body>
